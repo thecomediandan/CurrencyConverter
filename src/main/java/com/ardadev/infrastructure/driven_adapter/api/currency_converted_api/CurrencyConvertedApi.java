@@ -13,6 +13,7 @@ public class CurrencyConvertedApi implements CurrencyConvertedGateway {
             json = ConnectionApi.connectionCurrencyConverted(currency);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
         return new CurrencyConverted().CurrencyConverted_fromJSON(json);
     }

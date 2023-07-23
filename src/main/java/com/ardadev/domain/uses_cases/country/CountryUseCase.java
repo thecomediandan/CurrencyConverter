@@ -12,7 +12,10 @@ public class CountryUseCase {
         this.countryGateway = countryGateway;
     }
 
-    public List<Country> getCountry(String code) {
-        return this.countryGateway.getCountry(code);
+    public List<Country> getListCountries(String currency) {
+        return this.countryGateway.getListCountries(currency);
     }
+    public Country getCountry(String code) { return this.countryGateway.getCountry(code); }
+
+
 }

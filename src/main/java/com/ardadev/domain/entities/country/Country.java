@@ -3,6 +3,7 @@ package com.ardadev.domain.entities.country;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,31 @@ public class Country {
 
     public Map<String, String> getFlags() {
         return flags;
+    }
+
+    public String getCommonName() {
+        return this.name.get("common").toString();
+    }
+    public String getOfficialName() {
+        return this.name.get("official").toString();
+    }
+    public String getCurrencyCode() {
+        return new ArrayList<>(this.currencies.keySet()).get(0);
+    }
+    public String getCurrencyName() {
+        return this.currencies.get(getCurrencyCode()).get("name");
+    }
+    public String getCurrencySymbol() {
+        return this.currencies.get(getCurrencyCode()).get("symbol");
+    }
+    public String getFlagPng() {
+        return this.flags.get("png");
+    }
+    public String getFlagSvg() {
+        return this.flags.get("svg");
+    }
+    public String getFlagInfo() {
+        return this.flags.get("alt");
     }
 
     @Override

@@ -8,14 +8,27 @@ import java.util.List;
 
 public class CountryApi implements CountryGateway {
     @Override
-    public List<Country> getCountry(String code) {
+    public List<Country> getListCountries(String currency) {
         String json = null;
         try {
-            json = ConnectionApi.connectionCountry(code);
+            json = ConnectionApi.connectionCountryByCurrency(currency);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-
         return new Country().listCountryFromJSON(json);
+    }
+
+    @Override
+    public Country getCountry(String code) {
+        String json = null;
+        try {
+            json = ConnectionApi.connectionCountryByCode(code);
+            json = json.substring(1, json.length() - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return new Country().countryFromJSON(json);
     }
 }
