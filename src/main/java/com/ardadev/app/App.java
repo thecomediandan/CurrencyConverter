@@ -1,6 +1,6 @@
 package com.ardadev.app;
 
-import com.ardadev.presentation.HomeView;
+import com.ardadev.presentation.AppView;
 import com.ardadev.presentation.LoadingView;
 
 import javax.swing.*;
@@ -20,8 +20,8 @@ public class App {
                     Thread.sleep(300);
                     if (permissionView.getProgressBar().getTerminatedTasks() &&
                             !permissionView.isVisible()) {
-                        HomeView homeView = new HomeView(permissionView.getProgressBar().getInitialTasks());
-                        homeView.showLoading();
+                        AppView homeView = new AppView(permissionView.getProgressBar().getInitialTasks());
+                        homeView.showApp();
                         break;
                     }
                 } catch (InterruptedException e) {

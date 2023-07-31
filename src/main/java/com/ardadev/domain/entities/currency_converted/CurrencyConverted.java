@@ -6,6 +6,7 @@ import java.util.Map;
 public class CurrencyConverted {
     private String result;
     private String base_code;
+    private String time_last_update_utc;
     private Map<String, Double> conversion_rates;
     Gson gson;
     public CurrencyConverted() { this.gson = new Gson(); }
@@ -18,7 +19,9 @@ public class CurrencyConverted {
         return this.gson.toJson(currencyConverted);
     }
 
-
+    public String getTime_last_update_utc() {
+        return time_last_update_utc.substring(0, 16);
+    }
     public String getResult() {
         return result;
     }

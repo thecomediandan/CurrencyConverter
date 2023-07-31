@@ -15,6 +15,9 @@ public class CountryUseCase {
     public List<Country> getListCountries(String currency) {
         return this.countryGateway.getListCountries(currency);
     }
+    public List<Country> getListAllCountries() {
+        return this.countryGateway.getListAllCountries();
+    }
     public Country getCountry(String code) { return this.countryGateway.getCountry(code); }
 
 

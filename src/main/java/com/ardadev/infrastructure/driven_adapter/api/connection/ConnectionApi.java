@@ -26,6 +26,18 @@ public class ConnectionApi {
         URL url = new URL(CountryApiHelper.API_URL_CURRENCY + currency);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
+        connection.setConnectTimeout(9000);
+        /* HEADER SETTINGS
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Authorization", "Bearer your_access_token");
+         */
+        return connect(connection);
+    }
+
+    public static String connectionAllCountries() throws IOException {
+        URL url = new URL(CountryApiHelper.API_URL_ALL);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
         connection.setConnectTimeout(3000);
         /* HEADER SETTINGS
         connection.setRequestProperty("Content-Type", "application/json");

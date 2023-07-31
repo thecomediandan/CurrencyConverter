@@ -1,6 +1,6 @@
 package com.ardadev.presentation.component;
 
-import com.ardadev.config.InitialTasks;
+import com.ardadev.app.InitialTasks;
 
 import javax.swing.*;
 

@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Country {
+public class Country implements Comparable<Country>{
     private Map<String, Object> name;
     private Map<String, Map<String, String>> currencies;
     private Map<String, String> flags;
+
+    private String cca2;
     Gson gson;
 
     public Country() { this.gson = new Gson(); }
@@ -39,6 +41,9 @@ public class Country {
         return flags;
     }
 
+    public String getCca2() {
+        return cca2;
+    }
     public String getCommonName() {
         return this.name.get("common").toString();
     }
@@ -71,5 +76,10 @@ public class Country {
                 ", currencies=" + currencies +
                 ", flags=" + flags +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Country o) {
+        return Character.compare(getCommonName().charAt(0), o.getCommonName().charAt(0));
     }
 }

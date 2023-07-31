@@ -1,5 +1,6 @@
 package com.ardadev.presentation;
 
+import com.ardadev.config.ImageReader;
 import com.ardadev.presentation.component.ProgressBarStartApp;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ public class LoadingView extends JFrame {
         setResizable(false);
         setLayout(new BorderLayout());
         setTitle("Loading...");
+        setIconImage(ImageReader.readLocalImage("assets/favicon.png"));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(0,0,300, 125);
         setLocationRelativeTo(null);

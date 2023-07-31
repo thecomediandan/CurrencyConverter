@@ -1,4 +1,4 @@
-package com.ardadev.config;
+package com.ardadev.app;
 
 import com.ardadev.domain.entities.country.Country;
 import com.ardadev.domain.entities.currency_converted.CurrencyConverted;
@@ -63,6 +63,14 @@ public class InitialTasks {
                     currencyLocal
             ));
         });
+
+        // Task: Getting all countries
+        taskList.add(() -> {
+            this.results.add(new SimpleTask().TaskGetAllCountries(
+                    "Getting all countries successfully...",
+                    "Countries not found..."
+            ));
+        });
     }
     private static class SimpleTask {
         public Map<String, Object> TaskConnection(String url, String positiveMsg, String negativeMsg) {
@@ -109,6 +117,21 @@ public class InitialTasks {
             }
             response.put("result", result);
             response.put("currency", currencyLocal);
+
+            return response;
+        }
+
+        public Map<String, Object> TaskGetAllCountries(String positiveMsg, String negativeMsg) {
+            Map<String, Object> response = new HashMap<>();
+            List<Country> result = new ArrayList<>(
+                    new CountryUseCase(new CountryApi()).getListAllCountries()
+            );
+            if (!result.isEmpty()) {
+                response.put("msg", positiveMsg);
+            } else {
+                response.put("msg",negativeMsg);
+            }
+            response.put("result", result);
 
             return response;
         }
