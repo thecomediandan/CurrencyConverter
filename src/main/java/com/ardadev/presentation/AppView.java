@@ -3,6 +3,7 @@ package com.ardadev.presentation;
 import com.ardadev.config.ImageReader;
 import com.ardadev.config.ImageResizer;
 import com.ardadev.app.InitialTasks;
+import com.ardadev.config.ValidateTextToNumber;
 import com.ardadev.domain.entities.country.Country;
 import com.ardadev.domain.entities.currency_converted.CurrencyConverted;
 import com.ardadev.domain.uses_cases.country.CountryUseCase;
@@ -172,7 +173,8 @@ public class AppView extends JFrame {
             label1.setToolTipText(stringLabel1);
             label1.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
             label1.setHorizontalAlignment(SwingConstants.CENTER);
-            String stringLabel2 = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode()) + "(" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName();
+            double changeOut = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
+            String stringLabel2 = (Math.round(changeOut * 100.0) / 100.0) + " (" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName();
             JLabel label2 = new JLabel(stringLabel2);
             label2.setToolTipText(stringLabel2);
             label2.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
@@ -200,6 +202,8 @@ public class AppView extends JFrame {
 
             JPanel panelCurrencyIn = new JPanel(new GridLayout(1, 2, 5,0));
             JTextField currencyIn = new JTextField("1");
+            JTextField currencyOut = new JTextField(String.valueOf((Math.round(changeOut * 100.0) / 100.0)));
+            currencyIn.addKeyListener(new ValidateTextToNumber(currencyIn, currencyOut, localCurrencyConverted, countryOut));
             currencyIn.setFont(new Font(null, Font.BOLD, 15));
             currencyIn.setHorizontalAlignment(JTextField.RIGHT);
             CustomComboBoxModel modelNameCurrencyIn = new CustomComboBoxModel(listCountriesForCurrencies);
@@ -213,7 +217,7 @@ public class AppView extends JFrame {
             panelCurrencyIn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
             JPanel panelCurrencyOut = new JPanel(new GridLayout(1, 2, 5,0));
-            JTextField currencyOut = new JTextField(Double.toString(localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode())));
+
             currencyOut.setFont(new Font(null, Font.BOLD, 15));
             currencyOut.setHorizontalAlignment(JTextField.RIGHT);
             currencyOut.setEnabled(false);
@@ -244,12 +248,14 @@ public class AppView extends JFrame {
                 tasks.add(() -> {
                     SwingUtilities.invokeLater(() -> {
                         countryIn = countrySelected;
+                        assert countrySelected != null;
                         imageFlagIn.setIcon(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countrySelected.getFlagPng(), 75))));
                         imageFlagIn.setToolTipText(countrySelected.getFlagInfo());
                         String taskStringLabel1 = "1 " + "(" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName();
                         label1.setText(taskStringLabel1);
                         label1.setToolTipText(taskStringLabel1);
-                        String taskStringLabel2 = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode()) + " (" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName();
+                        double changeOut1 = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
+                        String taskStringLabel2 = (Math.round(changeOut1 * 100.0) / 100.0) + " (" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName();
                         label2.setText(taskStringLabel2);
                         label2.setToolTipText(taskStringLabel2);
                     });
@@ -264,9 +270,11 @@ public class AppView extends JFrame {
                     SwingUtilities.invokeLater(() -> {
                         Country countryOut = (Country) nameCurrencyOut.getSelectedItem();
                         assert countryOut != null;
-                        double currencyChange = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
-                        double change = Double.parseDouble(currencyIn.getText()) * currencyChange;
-                        currencyOut.setText(Double.toString(change));
+                        if (!currencyIn.getText().isEmpty()){
+                            double currencyChange = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
+                            double change = Double.parseDouble(currencyIn.getText()) * currencyChange;
+                            currencyOut.setText(String.valueOf((Math.round(change * 100.0) / 100.0)));
+                        }
                     });
                 });
                 progressBarLoadConsults.executeTasks(tasks);
@@ -279,9 +287,11 @@ public class AppView extends JFrame {
                 tasks.add(() -> {
                     SwingUtilities.invokeLater(() -> {
                         countryOut = countrySelected;
+                        assert countrySelected != null;
                         imageFlagOut.setIcon(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countrySelected.getFlagPng(), 75))));
                         imageFlagOut.setToolTipText(countrySelected.getFlagInfo());
-                        String taskStringLabel2 = localCurrencyConverted.getConversion_rates().get(countrySelected.getCurrencyCode()) + " (" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName();
+                        double changeOut2 = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
+                        String taskStringLabel2 = (Math.round(changeOut2 * 100.0) / 100.0) + " (" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName();
                         label2.setText(taskStringLabel2);
                         label2.setToolTipText(taskStringLabel2);
                     });
@@ -290,9 +300,11 @@ public class AppView extends JFrame {
                     SwingUtilities.invokeLater(() -> {
                         Country countryOut = (Country) nameCurrencyOut.getSelectedItem();
                         assert countryOut != null;
-                        double currencyChange = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
-                        double change = Double.parseDouble(currencyIn.getText()) * currencyChange;
-                        currencyOut.setText(Double.toString(change));
+                        if (!currencyIn.getText().isEmpty()) {
+                            double currencyChange = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
+                            double change = Double.parseDouble(currencyIn.getText()) * currencyChange;
+                            currencyOut.setText(String.valueOf((Math.round(change * 100.0) / 100.0)));
+                        }
                     });
                 });
                 progressBarLoadConsults.executeTasks(tasks);
