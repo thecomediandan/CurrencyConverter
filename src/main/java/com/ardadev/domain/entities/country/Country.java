@@ -11,34 +11,25 @@ public class Country implements Comparable<Country>{
     private Map<String, Object> name;
     private Map<String, Map<String, String>> currencies;
     private Map<String, String> flags;
-
     private String cca2;
-    Gson gson;
 
-    public Country() { this.gson = new Gson(); }
+    public Country() { }
 
     public Country countryFromJSON(String json) {
-        return this.gson.fromJson(json, Country.class);
+        return new Gson().fromJson(json, Country.class);
     }
     public List<Country> listCountryFromJSON(String json) {
         TypeToken<List<Country>> token = new TypeToken<List<Country>>() {};
-        return this.gson.fromJson(json, token.getType());
+        return new Gson().fromJson(json, token.getType());
     }
 
     public String countryToJSON(Country countryDetails) {
-        return this.gson.toJson(countryDetails);
+        return new Gson().toJson(countryDetails);
     }
 
-    public Map<String, Object> getName() {
-        return name;
-    }
 
     public Map<String, Map<String, String>> getCurrencies() {
         return currencies;
-    }
-
-    public Map<String, String> getFlags() {
-        return flags;
     }
 
     public String getCca2() {

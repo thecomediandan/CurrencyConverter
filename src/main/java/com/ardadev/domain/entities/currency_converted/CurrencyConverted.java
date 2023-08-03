@@ -8,15 +8,14 @@ public class CurrencyConverted {
     private String base_code;
     private String time_last_update_utc;
     private Map<String, Double> conversion_rates;
-    Gson gson;
-    public CurrencyConverted() { this.gson = new Gson(); }
+    public CurrencyConverted() { }
 
     public CurrencyConverted CurrencyConverted_fromJSON(String json) {
-        return this.gson.fromJson(json, CurrencyConverted.class);
+        return new Gson().fromJson(json, CurrencyConverted.class);
     }
 
     public String CurrencyConverted_toJSON(CurrencyConverted currencyConverted) {
-        return this.gson.toJson(currencyConverted);
+        return new Gson().toJson(currencyConverted);
     }
 
     public String getTime_last_update_utc() {
