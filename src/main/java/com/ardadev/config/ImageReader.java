@@ -5,6 +5,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,13 @@ public class ImageReader {
             return ImageIO.read(new File(imagePath));
         }catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    null,
+                    "[assets] Files not found!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
             return null;
         }
     }
