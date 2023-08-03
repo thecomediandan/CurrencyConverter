@@ -50,7 +50,9 @@ public class AppView extends JFrame {
 
         if (localCurrencyConverted == null) {
             progressBarLoadConsults.executeTaskCurrencyConverted("USD");
-            localCurrencyConverted = progressBarLoadConsults.getCurrencyConverted();
+            while (!progressBarLoadConsults.getTerminatedTasks()) {
+                localCurrencyConverted = progressBarLoadConsults.getCurrencyConverted();
+            }
             if (localCurrencyConverted == null) System.exit(1);
         }
 
@@ -61,7 +63,7 @@ public class AppView extends JFrame {
         mainCardLayout = new CardLayout();
         mainBody = new JPanel(mainCardLayout);
         mainBody.add(WelcomeView.createWelcomePanel(), "Welcome");
-        mainBody.add(CurrencyConverterView.createCurrencyConverterPanel(), "Currency Converter");
+        mainBody.add(CurrencyConverterView.createCurrencyConverterPanel(this), "Currency Converter");
         mainBody.add(UnitsConverterView.createUnitConverterPanel(), "Units Converter");
         mainCardLayout.show(mainBody, "Welcome");
 
@@ -72,7 +74,7 @@ public class AppView extends JFrame {
         rootPanel.setBorder(BorderFactory.createEmptyBorder(0,10,10,10));
 
         setResizable(false);
-        setJMenuBar(new MenuBarApp(mainCardLayout, mainBody, progressBarLoadConsults));
+        setJMenuBar(new MenuBarApp(mainCardLayout, mainBody, this));
         setTitle("Currency Converter" + (countryHeader == null ? "" : ": " + countryHeader));
         setIconImage(ImageReader.readLocalImage("assets/favicon.png"));
 
@@ -86,31 +88,16 @@ public class AppView extends JFrame {
         getContentPane().add(rootPanel);
     }
 
-    public AppView() {
-        setContentPane(new JPanel());
-        ListCountriesAccepted = new CountryUseCase(new CountryApi()).getListCountries("usd");
-        JComboBox<Country> c = new JComboBox<>(new CustomComboBoxModel(ListCountriesAccepted));
-        c.setRenderer(new CustomComboBoxRendererWithImage());
-
-        getContentPane().add(c);
-
-        Country as = new CountryUseCase(new CountryApi()).getCountry("us");
-        CustomComboBoxModel f = (CustomComboBoxModel) c.getModel();
-        c.setSelectedIndex(f.getIndexCountry(as));
-
-    }
-
     private JPanel createHeader() {
-        JPanel panelHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JPanel panelHeader = new JPanel(new BorderLayout(0,0));
 
         JLabel title = new JLabel(new ImageIcon(Objects.requireNonNull(ImageResizer.resizedByWidthLocal("assets/CurrencyConverter.png", 160))));
 
-        progressBarLoadConsults.setBorder(BorderFactory.createMatteBorder(0, 70,0,0, Color.white));
-        progressBarLoadConsults.setPreferredSize(new Dimension(200, 30));
+        progressBarLoadConsults.setPreferredSize(new Dimension(200, 5));
+        progressBarLoadConsults.setVisible(true);
         panelHeader.setBackground(Color.white);
-        panelHeader.add(title);
-        panelHeader.add(progressBarLoadConsults);
-        progressBarLoadConsults.setVisible(false);
+        panelHeader.add(title, BorderLayout.WEST);
+        panelHeader.add(progressBarLoadConsults, BorderLayout.SOUTH);
 
         return panelHeader;
     }
@@ -162,11 +149,13 @@ public class AppView extends JFrame {
     }
 
     private static class CurrencyConverterView {
-        private static JPanel createCurrencyConverterPanel() {
+        private static JPanel createCurrencyConverterPanel(AppView view) {
             JPanel body = new JPanel(new GridLayout(2, 1, 0,5));
+            body.setBorder(BorderFactory.createEmptyBorder(7,0,0,0));
 
             JPanel panelResults = new JPanel(new GridLayout(1, 2));
 
+            // Labels basics of elected currency
             JPanel panelTexts = new JPanel(new GridLayout(3,1));
             String stringLabel1 = "1 " + "(" + countryIn.getCurrencySymbol() + ") " + countryIn.getCurrencyName();
             JLabel label1 = new JLabel(stringLabel1);
@@ -176,7 +165,7 @@ public class AppView extends JFrame {
             double changeOut = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
             String stringLabel2 = (Math.round(changeOut * 100.0) / 100.0) + " (" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName();
             JLabel label2 = new JLabel(stringLabel2);
-            label2.setToolTipText(stringLabel2);
+            label2.setToolTipText(changeOut + " (" + countryOut.getCurrencySymbol() + ") " + countryOut.getCurrencyName());
             label2.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
             label2.setHorizontalAlignment(SwingConstants.CENTER);
             JLabel label3 = new JLabel("[Last Update] " + localCurrencyConverted.getTime_last_update_utc());
@@ -184,11 +173,12 @@ public class AppView extends JFrame {
             panelTexts.add(label2);
             panelTexts.add(label3);
 
+            // Labels of elected countries flags
             JPanel panelFlags = new JPanel(new GridLayout(2,1));
             JLabel imageFlagIn = new JLabel(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countryIn.getFlagPng(), 75))));
-            imageFlagIn.setToolTipText(countryIn.getFlagInfo());
+            imageFlagIn.setToolTipText("<html><body style='width: 150px;'>" + countryIn.getFlagInfo() + "</body></html>");
             JLabel imageFlagOut = new JLabel(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countryOut.getFlagPng(), 75))));
-            imageFlagOut.setToolTipText(countryOut.getFlagInfo());
+            imageFlagOut.setToolTipText("<html><body style='width: 150px;'>" + countryOut.getFlagInfo() + "</body></html>");
             panelFlags.add(imageFlagIn);
             panelFlags.add(imageFlagOut);
 
@@ -196,14 +186,17 @@ public class AppView extends JFrame {
             panelResults.add(panelFlags);
 
             JPanel panelCurrency = new JPanel(new GridLayout(2, 1, 0, 10));
+
+            // List update of countries accepted for API currency converter
             List<Country> listCountriesForCurrencies = getListCountriesWithCurrencies(
                     ListCountriesAccepted,
                     localCurrencyConverted);
 
+            // Panel of input main data to convert
             JPanel panelCurrencyIn = new JPanel(new GridLayout(1, 2, 5,0));
             JTextField currencyIn = new JTextField("1");
             JTextField currencyOut = new JTextField(String.valueOf((Math.round(changeOut * 100.0) / 100.0)));
-            currencyIn.addKeyListener(new ValidateTextToNumber(currencyIn, currencyOut, localCurrencyConverted, countryOut));
+            currencyIn.addKeyListener(new ValidateTextToNumber(currencyIn, currencyOut, view));
             currencyIn.setFont(new Font(null, Font.BOLD, 15));
             currencyIn.setHorizontalAlignment(JTextField.RIGHT);
             CustomComboBoxModel modelNameCurrencyIn = new CustomComboBoxModel(listCountriesForCurrencies);
@@ -216,8 +209,8 @@ public class AppView extends JFrame {
             panelCurrencyIn.add(nameCurrencyIn);
             panelCurrencyIn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 
+            // Panel of output or results about a conversion
             JPanel panelCurrencyOut = new JPanel(new GridLayout(1, 2, 5,0));
-
             currencyOut.setFont(new Font(null, Font.BOLD, 15));
             currencyOut.setHorizontalAlignment(JTextField.RIGHT);
             currencyOut.setEnabled(false);
@@ -237,9 +230,11 @@ public class AppView extends JFrame {
             body.add(panelResults);
             body.add(panelCurrency);
 
+            // Set to JComboBox's default countries
             nameCurrencyIn.setSelectedIndex(modelNameCurrencyIn.getIndexCountry(countryIn));
             nameCurrencyOut.setSelectedIndex(modelNameCurrencyIn.getIndexCountry(countryOut));
 
+            // Add to JComboBox's listeners
             nameCurrencyIn.addActionListener(e -> {
                 JComboBox<Country> jComboBox = (JComboBox<Country>) e.getSource();
                 Country countrySelected = (Country) jComboBox.getSelectedItem();
@@ -250,7 +245,7 @@ public class AppView extends JFrame {
                         countryIn = countrySelected;
                         assert countrySelected != null;
                         imageFlagIn.setIcon(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countrySelected.getFlagPng(), 75))));
-                        imageFlagIn.setToolTipText(countrySelected.getFlagInfo());
+                        imageFlagIn.setToolTipText("<html><body style='width: 150px;'>" + countrySelected.getFlagInfo() + "</body></html>");
                         String taskStringLabel1 = "1 " + "(" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName();
                         label1.setText(taskStringLabel1);
                         label1.setToolTipText(taskStringLabel1);
@@ -277,7 +272,8 @@ public class AppView extends JFrame {
                         }
                     });
                 });
-                progressBarLoadConsults.executeTasks(tasks);
+                view.getProgressBarLoadConsults().executeTasks(tasks);
+
             });
             nameCurrencyOut.addActionListener(e -> {
                 JComboBox<Country> jComboBox = (JComboBox<Country>) e.getSource();
@@ -289,11 +285,11 @@ public class AppView extends JFrame {
                         countryOut = countrySelected;
                         assert countrySelected != null;
                         imageFlagOut.setIcon(new ImageIcon(Objects.requireNonNull(ImageResizer.resizeByWidthURL(countrySelected.getFlagPng(), 75))));
-                        imageFlagOut.setToolTipText(countrySelected.getFlagInfo());
+                        imageFlagOut.setToolTipText("<html><body style='width: 150px;'>" + countrySelected.getFlagInfo() + "</body></html>");
                         double changeOut2 = localCurrencyConverted.getConversion_rates().get(countryOut.getCurrencyCode());
                         String taskStringLabel2 = (Math.round(changeOut2 * 100.0) / 100.0) + " (" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName();
                         label2.setText(taskStringLabel2);
-                        label2.setToolTipText(taskStringLabel2);
+                        label2.setToolTipText(changeOut2 + " (" + countrySelected.getCurrencySymbol() + ") " + countrySelected.getCurrencyName());
                     });
                 });
                 tasks.add(() -> {
@@ -307,7 +303,7 @@ public class AppView extends JFrame {
                         }
                     });
                 });
-                progressBarLoadConsults.executeTasks(tasks);
+                view.getProgressBarLoadConsults().executeTasks(tasks);
             });
 
             return body;
@@ -414,4 +410,17 @@ public class AppView extends JFrame {
 
         return listCountriesWithCurrencies;
     }
+
+    public ProgressBarGettingDataProcess getProgressBarLoadConsults() {
+        return progressBarLoadConsults;
+    }
+
+    public Country getCountryOut() {
+        return countryOut;
+    }
+
+    public CurrencyConverted getLocalCurrencyConverted() {
+        return localCurrencyConverted;
+    }
+
 }

@@ -15,7 +15,7 @@ public class ConnectionApi {
         URL url = new URL(CurrencyConvertedApiHelper.API_URL + CurrencyConvertedApiHelper.API_KEY + "/latest/" + CURRENCY);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(3000);
+        connection.setConnectTimeout(15000);
         /* HEADER SETTINGS
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Authorization", "Bearer your_access_token");
@@ -26,7 +26,7 @@ public class ConnectionApi {
         URL url = new URL(CountryApiHelper.API_URL_CURRENCY + currency);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(9000);
+        connection.setConnectTimeout(15000);
         /* HEADER SETTINGS
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Authorization", "Bearer your_access_token");
@@ -38,7 +38,7 @@ public class ConnectionApi {
         URL url = new URL(CountryApiHelper.API_URL_ALL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(3000);
+        connection.setConnectTimeout(15000);
         /* HEADER SETTINGS
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Authorization", "Bearer your_access_token");
@@ -50,7 +50,7 @@ public class ConnectionApi {
         URL url = new URL(CountryApiHelper.API_URL_CODE + code);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(3000);
+        connection.setConnectTimeout(15000);
         /* HEADER SETTINGS
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Authorization", "Bearer your_access_token");

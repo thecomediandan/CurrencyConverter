@@ -1,7 +1,6 @@
 package com.ardadev.config;
 
-import com.ardadev.domain.entities.country.Country;
-import com.ardadev.domain.entities.currency_converted.CurrencyConverted;
+import com.ardadev.presentation.AppView;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -13,15 +12,13 @@ import java.util.regex.Pattern;
 public class ValidateTextToNumber implements KeyListener {
     private final JTextField input;
     private final JTextField output;
-    private final CurrencyConverted currencyConverted;
-    private final Country country;
+    private final AppView view;
     private static final String REGEX_DOUBLE = "^(\\d+\\.?(\\d{1,2})?)$";
     private static final String REGEX_DOUBLE_FIRST_ZERO = "^(\\d\\.(\\d{1,2})?)$";
-    public ValidateTextToNumber(JTextField input, JTextField output, CurrencyConverted currencyConverted, Country country) {
+    public ValidateTextToNumber(JTextField input, JTextField output, AppView view) {
         this.input = input;
         this.output = output;
-        this.currencyConverted = currencyConverted;
-        this.country = country;
+        this.view = view;
     }
 
     @Override
@@ -46,10 +43,11 @@ public class ValidateTextToNumber implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         if (!(input.getText().isEmpty() || e.getKeyChar() == '.')){
-            double currencyChange = currencyConverted.getConversion_rates().get(country.getCurrencyCode());
+            double currencyChange = view.getLocalCurrencyConverted().getConversion_rates().get(view.getCountryOut().getCurrencyCode());
             double change = Double.parseDouble(input.getText()) * currencyChange;
             SwingUtilities.invokeLater(() -> {
-                output.setText(String.valueOf((Math.round(change * 100.0) / 100.0)));
+                String solve = String.valueOf((Math.round(change * 100.0) / 100.0));
+                output.setText(solve);
             });
         }
     }
@@ -58,8 +56,6 @@ public class ValidateTextToNumber implements KeyListener {
 
         String REGEX;
         String inputText = this.input.getText();
-
-        System.out.println(inputText);
 
         if (Objects.equals(inputText, "0")) {
             REGEX = REGEX_DOUBLE_FIRST_ZERO;

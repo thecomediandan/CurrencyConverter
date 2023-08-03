@@ -1,18 +1,20 @@
 package com.ardadev.presentation.component;
 
-import com.ardadev.config.ImageResizer;
+import com.ardadev.infrastructure.driven_adapter.api.connection.TestConnection;
+import com.ardadev.infrastructure.helpers.CountryApiHelper;
+import com.ardadev.infrastructure.helpers.CurrencyConvertedApiHelper;
 import com.ardadev.presentation.AboutUsView;
+import com.ardadev.presentation.AppView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuBarApp extends JMenuBar {
-    public MenuBarApp(CardLayout mainCardLayout, JPanel mainBody, JProgressBar progressBarLoadConsults) {
-        JProgressBar jProgressBar = progressBarLoadConsults;
+    public MenuBarApp(CardLayout mainCardLayout, JPanel mainBody, AppView view) {
         //Where the GUI is created:
         JMenu menu, submenu;
         JMenuItem menuItem;
@@ -39,7 +41,6 @@ public class MenuBarApp extends JMenuBar {
         menu.add(homeItem);
         homeItem.addActionListener((e) -> {
             mainCardLayout.show(mainBody, "Welcome");
-            jProgressBar.setVisible(false);
         });
 
         currencyConverterItem = new JMenuItem("Currency Converter",
@@ -52,7 +53,6 @@ public class MenuBarApp extends JMenuBar {
         menu.add(currencyConverterItem);
         currencyConverterItem.addActionListener((e) -> {
             mainCardLayout.show(mainBody, "Currency Converter");
-            progressBarLoadConsults.setVisible(true);
         });
 
         unitsConverterItem = new JMenuItem("Units Converter",
@@ -67,7 +67,6 @@ public class MenuBarApp extends JMenuBar {
         menu.add(unitsConverterItem);
         unitsConverterItem.addActionListener((e) -> {
             mainCardLayout.show(mainBody, "Units Converter");
-            progressBarLoadConsults.setVisible(false);
         });
 
         menu.addSeparator();
@@ -124,6 +123,29 @@ public class MenuBarApp extends JMenuBar {
                 KeyEvent.VK_O, InputEvent.ALT_MASK));
         internetTestItem.setIcon(new ImageIcon("assets/test.png"));
         submenu.add(internetTestItem);
+        internetTestItem.addActionListener((event) -> {
+            List<Runnable> tasks = new ArrayList<>();
+            tasks.add(() -> {
+                if (TestConnection.TestInternet("https://www.google.com")) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Internet connection is successfully!",
+                            "Alert",
+                            JOptionPane.DEFAULT_OPTION,
+                            new ImageIcon("assets/check.png")
+                    );
+                }else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Internet connection lost!",
+                            "Alert",
+                            JOptionPane.ERROR_MESSAGE,
+                            new ImageIcon("assets/nocheck.png")
+                    );
+                }
+            });
+            view.getProgressBarLoadConsults().executeTasks(tasks);
+        });
 
         apiTestItem = new JMenuItem("Connection API test", KeyEvent.VK_P);
         apiTestItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -131,6 +153,40 @@ public class MenuBarApp extends JMenuBar {
         apiTestItem.setIcon(new ImageIcon("assets/test.png"));
         submenu.add(apiTestItem);
         menu.add(submenu);
+        apiTestItem.addActionListener((event) -> {
+            List<Runnable> tasks = new ArrayList<>();
+            tasks.add(() -> {
+                Boolean testCountryAPI = TestConnection.TestInternet(CountryApiHelper.API_URL_ALL);
+                Boolean testCurrencyAPI = TestConnection.TestInternet(CurrencyConvertedApiHelper.API_URL
+                 + CurrencyConvertedApiHelper.API_KEY + "/latest/USD");
+
+                String resultTestCountryAPI = testCountryAPI ?
+                        "Success: Country API":
+                        "Failed: Country API";
+                String resultTestCurrencyAPI = testCurrencyAPI ?
+                        "Success: Currency API":
+                        "Failed: Currency API";
+
+                if (testCountryAPI && testCurrencyAPI) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            resultTestCountryAPI + "\n" +resultTestCurrencyAPI,
+                            "Alert",
+                            JOptionPane.DEFAULT_OPTION,
+                            new ImageIcon("assets/check.png")
+                    );
+                }else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            resultTestCountryAPI + "\n" +resultTestCurrencyAPI,
+                            "Alert",
+                            JOptionPane.ERROR_MESSAGE,
+                            new ImageIcon("assets/nocheck.png")
+                    );
+                }
+            });
+            view.getProgressBarLoadConsults().executeTasks(tasks);
+        });
 
         //Add another item
         menu.addSeparator();
