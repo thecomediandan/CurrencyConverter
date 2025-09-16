@@ -72,6 +72,7 @@ public class ConnectionApi {
             reader.close();
 
             String apiResponse = response.toString();
+            //System.out.println(apiResponse);
             connection.disconnect();
             return apiResponse;
         } else {

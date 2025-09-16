@@ -126,6 +126,7 @@ public class InitialTasks {
             List<Country> result = new ArrayList<>(
                     new CountryUseCase(new CountryApi()).getListAllCountries()
             );
+            System.out.println("Cantidad de paises: " + result.size());
             if (!result.isEmpty()) {
                 response.put("msg", positiveMsg);
             } else {
