@@ -42,6 +42,7 @@ public class Country implements Comparable<Country>{
         return this.name.get("official").toString();
     }
     public String getCurrencyCode() {
+        if (this.currencies.isEmpty()) return "N/A";
         return new ArrayList<>(this.currencies.keySet()).get(0);
     }
     public String getCurrencyName() {

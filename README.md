@@ -68,3 +68,5 @@ This is a program to convert currencies although unit conversion is also under d
 - Implemented functions to resize images.
 
 ---
+
+- Java 17

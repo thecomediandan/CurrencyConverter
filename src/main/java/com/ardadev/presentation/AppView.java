@@ -67,7 +67,7 @@ public class AppView extends JFrame {
         mainBody.add(UnitsConverterView.createUnitConverterPanel(), "Units Converter");
         mainCardLayout.show(mainBody, "Welcome");
 
-        JLabel footer = new JLabel("© 2023 ArdaDev, All rights reserved.");
+        JLabel footer = new JLabel("© 2025 ArdaDev, All rights reserved.");
         footer.setHorizontalAlignment(SwingConstants.CENTER);
         footer.setBorder(BorderFactory.createEmptyBorder(15,0,0,0));
 
