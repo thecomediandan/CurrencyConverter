@@ -7,10 +7,11 @@ import org.apache.http.impl.client.HttpClients;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+//import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import javax.swing.JOptionPane;
 
 public class ImageResizer {
 
@@ -90,10 +91,34 @@ public class ImageResizer {
      * @param newWidth Width based on pixels
      * @return Object type BufferedImage
      */
-    public static BufferedImage resizedByWidthLocal(String imagePath, int newWidth) {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File(imagePath));
+//    public static BufferedImage resizedByWidthLocal(String imagePath, int newWidth) {
+//        try {
+//            BufferedImage originalImage = ImageIO.read(new File(imagePath));
+//
+//            int originalWidth = originalImage.getWidth();
+//            int originalHeight = originalImage.getHeight();
+//            int newHeight = (int) ((double) newWidth / originalWidth * originalHeight);
+//
+//            BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+//            Graphics2D g2d = resizedImage.createGraphics();
+//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//            g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+//            g2d.dispose();
+//
+//            return resizedImage;
+//        }catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+    
+    public static BufferedImage resizedByWidthLocal(String resourcePath, int newWidth) {
+        try (InputStream is = ImageReader.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (is == null) {
+                throw new IOException("No se encontró el recurso: " + resourcePath);
+            }
 
+            BufferedImage originalImage = ImageIO.read(is);
             int originalWidth = originalImage.getWidth();
             int originalHeight = originalImage.getHeight();
             int newHeight = (int) ((double) newWidth / originalWidth * originalHeight);
@@ -105,11 +130,19 @@ public class ImageResizer {
             g2d.dispose();
 
             return resizedImage;
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                null,
+                "[assets] Resource not found: " + resourcePath,
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
             return null;
         }
     }
+
 
     /**
      * 'resizedByWidthAndHeightLocal' should be into parameters of object ImageIcon for working on a component (Example: JLabel).
@@ -120,19 +153,46 @@ public class ImageResizer {
      * @param newHeight Height based on pixels
      * @return Object type BufferedImage
      */
-    public static BufferedImage resizedByWidthAndHeightLocal(String imagePath, int newWidth, int newHeight) {
-        try {
-            BufferedImage originalImage = ImageIO.read(new File(imagePath));
+//    public static BufferedImage resizedByWidthAndHeightLocal(String imagePath, int newWidth, int newHeight) {
+//        try {
+//            BufferedImage originalImage = ImageIO.read(new File(imagePath));
+//
+//            BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+//            Graphics2D g2d = resizedImage.createGraphics();
+//            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//            g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+//            g2d.dispose();
+//
+//            return resizedImage;
+//        }catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+    public static BufferedImage resizedByWidthAndHeightLocal(String resourcePath, int newWidth, int newHeight) {
+        try (InputStream is = ImageReader.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (is == null) {
+                throw new IOException("No se encontró el recurso: " + resourcePath);
+            }
 
+            BufferedImage originalImage = ImageIO.read(is);
             BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+
             Graphics2D g2d = resizedImage.createGraphics();
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
             g2d.dispose();
 
             return resizedImage;
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                null,
+                "[assets] Resource not found: " + resourcePath,
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
             return null;
         }
     }

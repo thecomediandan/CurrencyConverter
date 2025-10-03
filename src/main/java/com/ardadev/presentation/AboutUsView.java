@@ -37,9 +37,12 @@ public class AboutUsView extends JDialog {
 
         LabelWithHyperlink linkProject = new LabelWithHyperlink("https://github.com/thecomediandan/CurrencyConverter",
                 "https://github.com/thecomediandan/CurrencyConverter", 11);
-        LabelWithHyperlink linkEmail = new LabelWithHyperlink(new ImageIcon("assets/gmail.png"),"mailto:danqk@outlook.com");
-        LabelWithHyperlink linkInstagram = new LabelWithHyperlink(new ImageIcon("assets/instagram.png"),"https://www.instagram.com/dannqk/");
-        LabelWithHyperlink linkGitHub = new LabelWithHyperlink(new ImageIcon("assets/github.png"),"https://github.com/thecomediandan");
+        //LabelWithHyperlink linkEmail = new LabelWithHyperlink(new ImageIcon("assets/gmail.png"),"mailto:danqk@outlook.com");
+        //LabelWithHyperlink linkInstagram = new LabelWithHyperlink(new ImageIcon("assets/instagram.png"),"https://www.instagram.com/dannqk/");
+        //LabelWithHyperlink linkGitHub = new LabelWithHyperlink(new ImageIcon("assets/github.png"),"https://github.com/thecomediandan");
+        LabelWithHyperlink linkEmail = new LabelWithHyperlink(new ImageIcon(Objects.requireNonNull(ImageReader.readLocalImage("assets/gmail.png"))),"mailto:danqk@outlook.com");
+        LabelWithHyperlink linkInstagram = new LabelWithHyperlink(new ImageIcon(Objects.requireNonNull(ImageReader.readLocalImage("assets/instagram.png"))),"https://www.instagram.com/dannqk/");
+        LabelWithHyperlink linkGitHub = new LabelWithHyperlink(new ImageIcon(Objects.requireNonNull(ImageReader.readLocalImage("assets/github.png"))),"https://github.com/thecomediandan");
         linkGitHub.setText("    ");
         LabelWithHyperlink linkApiCurrencyConverter = new LabelWithHyperlink("https://www.exchangerate-api.com/",
                 "https://www.exchangerate-api.com/", 11);
